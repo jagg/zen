@@ -6,13 +6,7 @@ use libc::termios;
 use std::thread;
 
 use zen::event::KeyReader;
-
-fn get_byte() -> Option<u8> {
-    std::io::stdin()
-        .bytes()
-        .next()
-        .and_then(|result| result.ok())
-}
+use zen::keys::{Key, parse_key};
 
 struct Termios {
     termios_c: termios,
@@ -72,10 +66,11 @@ fn main() {
     let mut buf = [0u8; 1];
     let mut c = 0x00;
 
-    while c != 0x71 {
+    //while c != 0x71 {
+    while c != 'q' as u8 {
         if let Ok(1) = key_reader.read(&mut buf) {
             c = buf[0];
-            print!("{:?}\r\n", c);
+            print!("{:?}\r\n", parse_key(c));
         } else {
             print!("...");
             thread::sleep_ms(100);
